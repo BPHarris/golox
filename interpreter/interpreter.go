@@ -1,13 +1,11 @@
 // Package interpreter provides the interpreter for golox.
 package interpreter
 
-import (
-	"fmt"
-	"golox/lexer"
-	"golox/errors"
-	"io/ioutil"
-	"os"
-)
+import "fmt"
+import "golox/lexer"
+import "golox/errors"
+import "io/ioutil"
+import "os"
 
 // RunFile reads, parses, and excecutes the source from the given file.
 func RunFile(path string) {
@@ -20,7 +18,7 @@ func RunFile(path string) {
 
 	Run(string(source))
 
-	if loxerror.HasHadError() {
+	if errors.HasHadError() {
 		os.Exit(65)
 	}
 }

@@ -1,8 +1,7 @@
-package loxerror
+package errors
 
-import (
-	"fmt"
-)
+import "fmt"
+
 
 // Global error state
 var has_had_error = false

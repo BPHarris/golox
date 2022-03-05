@@ -1,10 +1,8 @@
 package interpreter
 
-import (
-	"os"
-	"os/exec"
-	"testing"
-)
+import "os"
+import "os/exec"
+import "testing"
 
 const GOLOX_TEST_RUNFILE = "GOLOX_TEST_RUNFILE"
 

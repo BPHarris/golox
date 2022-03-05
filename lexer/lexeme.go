@@ -1,8 +1,6 @@
 package lexer
 
-import (
-	"fmt"
-)
+import "fmt"
 
 // Lexeme stores the information for a lexeme.
 // Lexeme.lexeme:

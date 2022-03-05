@@ -1,12 +1,9 @@
 package repl
 
-import (
-	"bufio"
-	"fmt"
-	"os"
-	"golox/interpreter"
-)
-
+import "bufio"
+import "fmt"
+import "os"
+import "golox/interpreter"
 
 func RunPrompt() {
 	reader := bufio.NewReader(os.Stdin)
@@ -28,4 +25,3 @@ func RunPrompt() {
 		interpreter.Run(line)
 	}
 }
-

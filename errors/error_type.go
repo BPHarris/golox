@@ -1,4 +1,4 @@
-package loxerror
+package errors
 
 type ErrorType int64
 
