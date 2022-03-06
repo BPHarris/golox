@@ -30,13 +30,8 @@ func Lex(source string) []Lexeme {
 	return lexer.lexemes
 }
 
-// Return true if the lexer has reached the end of the file, false otherwise.
-func (l Lexer) IsAtEnd() bool {
-	return l.current >= len(l.source)
-}
-
 // Consume the next lexeme and update the lexer state accordingly.
-func (l Lexer) ConsumeLexeme() {
+func (l *Lexer) ConsumeLexeme() {
 	c := l.Advance()
 
 	switch c {
@@ -95,14 +90,14 @@ func (l Lexer) ConsumeLexeme() {
 }
 
 // Consume characters until the end of the started line comment.
-func (l Lexer) ConsumeComment() {
+func (l *Lexer) ConsumeComment() {
 	for l.LookAhead() != '\n' && !l.IsAtEnd() {
 		l.Advance()
 	}
 }
 
 // Consume multi-line comment.
-func (l Lexer) ConsumeMultiLineComment() {
+func (l *Lexer) ConsumeMultiLineComment() {
 	for l.LookAhead() != '*' && l.LookAheadNext() != '/' && !l.IsAtEnd() {
 		if l.LookAhead() == '\n' {
 			l.line++
@@ -120,8 +115,13 @@ func (l Lexer) ConsumeMultiLineComment() {
 	l.Advance()
 }
 
+// Return true if the lexer has reached the end of the file, false otherwise.
+func (l Lexer) IsAtEnd() bool {
+	return l.current >= len(l.source)
+}
+
 // Return the current character and advance the lexer by one.
-func (l Lexer) Advance() byte {
+func (l *Lexer) Advance() byte {
 	char := l.source[l.current]
 
 	l.current++
@@ -130,14 +130,14 @@ func (l Lexer) Advance() byte {
 }
 
 // Add a new Lexeme of the given type to the lexer.
-func (l Lexer) AddLexeme(lexeme_type LexemeType) {
+func (l *Lexer) AddLexeme(lexeme_type LexemeType) {
 	l.lexemes = append(l.lexemes, Lexeme{lexeme_type, l.source[l.start:l.current], l.line})
 }
 
 // If the current character matches the expected then add the first given
 // lexeme, otherwise add the second given lexeme.
 // Consume the expected character if seen, see Lexer.Match().
-func (l Lexer) AddLexemeWithLookAhead(expected byte, on_match LexemeType, otherwise LexemeType) {
+func (l *Lexer) AddLexemeWithLookAhead(expected byte, on_match LexemeType, otherwise LexemeType) {
 	if l.Match(expected) {
 		l.AddLexeme(on_match)
 	} else {
@@ -146,7 +146,7 @@ func (l Lexer) AddLexemeWithLookAhead(expected byte, on_match LexemeType, otherw
 }
 
 // Add a new Identifier Lexeme to the lexer.
-func (l Lexer) AddIdentifier() {
+func (l *Lexer) AddIdentifier() {
 	for IsAlphanumeric(l.LookAhead()) {
 		l.Advance()
 	}
@@ -162,7 +162,7 @@ func (l Lexer) AddIdentifier() {
 }
 
 // Add a new LiteralString Lexeme to the lexer.
-func (l Lexer) AddLiteralString() {
+func (l *Lexer) AddLiteralString() {
 	for l.LookAhead() != '"' && !l.IsAtEnd() {
 		if l.LookAhead() == '\n' {
 			l.line++
@@ -182,7 +182,7 @@ func (l Lexer) AddLiteralString() {
 }
 
 // Add a new LiteralNumber Lexeme to the lexer.
-func (l Lexer) AddLiteralNumber() {
+func (l *Lexer) AddLiteralNumber() {
 	for IsDigit(l.LookAhead()) {
 		l.Advance()
 	}
@@ -197,6 +197,14 @@ func (l Lexer) AddLiteralNumber() {
 	}
 
 	l.AddLexeme(LiteralNumber)
+
+	// Verify correctness of lexeme
+	lexeme := l.lexemes[len(l.lexemes)-1]
+	_, err := lexeme.ParseFloat()
+
+	if err != nil {
+		e.Error(e.SyntaxError, lexeme.line, err.Error())
+	}
 }
 
 // Return the next character without consuming it.
@@ -220,7 +228,7 @@ func (l Lexer) LookAheadNext() byte {
 // Return true if the current character matches the expected character, false
 // otherwise.
 // If the character matches then it is consumed.
-func (l Lexer) Match(expected byte) bool {
+func (l *Lexer) Match(expected byte) bool {
 	if l.IsAtEnd() {
 		return false
 	}

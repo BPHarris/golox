@@ -2,7 +2,6 @@ package errors
 
 import "fmt"
 
-
 // Global error state
 var has_had_error = false
 

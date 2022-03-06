@@ -119,9 +119,9 @@ func (lexeme_type LexemeType) String() string {
 	case Identifier:
 		return "Identifier"
 	case LiteralString:
-		return "String"
+		return "LiteralString"
 	case LiteralNumber:
-		return "Number"
+		return "LiteralNumber"
 	case And:
 		return "And"
 	case Class:
